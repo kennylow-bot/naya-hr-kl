@@ -1,0 +1,38 @@
+# Render Blueprint: Render → New → Blueprint → pick this repository → Apply.
+services:
+  - type: web
+    name: naya-hr
+    runtime: node
+    region: singapore          # closest Render region to Kuala Lumpur
+    plan: 0.5c-512mb           # smallest always-on paid plan (persistent disks need a paid plan)
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /login
+    disk:
+      name: naya-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "true"
+      - key: DB_PATH
+        value: /var/data/naya-hr.db
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+      - key: SESSION_SECRET
+        generateValue: true     # Render creates a long random secret for you
+      - key: OWNER_EMAIL
+        value: kennylow@naya.asia
+      - key: OWNER_NAME
+        value: Kenny Low
+      - key: ALLOWED_EMAIL_DOMAIN
+        value: naya.asia
+      - key: OWNER_INITIAL_PASSWORD
+        sync: false             # Render asks you for this when you apply the Blueprint
+      # Email: add SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS later under Environment.
+      - key: MAIL_FROM
+        value: Naya HR <hr@naya.asia>
